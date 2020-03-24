@@ -80,9 +80,9 @@ OpenVPN Version: OpenVPN 2.3.14 x86_64-alpine-linux-musl [SSL (OpenSSL)] [LZO] [
             o_stats = pattern.match(line)
         if o_stats:
             if self.datadog:
-                self.stats.gauge('openvpn.nclients', o_stats.group('nclients'), tags=self.tags)
-                self.stats.gauge('openvpn.bytesin', o_stats.group('bytesin'), tags=self.tags)
-                self.stats.gauge('openvpn.bytesout', o_stats.group('bytesout'), tags=self.tags)
+                self.stats.gauge('openvpn.nclients', int(o_stats.group('nclients')), tags=self.tags)
+                self.stats.gauge('openvpn.bytesin', int(o_stats.group('bytesin')), tags=self.tags)
+                self.stats.gauge('openvpn.bytesout', int(o_stats.group('bytesout')), tags=self.tags)
 
     def parse_status(self, status):
         """HEADER,CLIENT_LIST,Common Name,Real Address,Virtual Address,Bytes Received,Bytes Sent,Connected Since,Connected Since (time_t),Username
@@ -109,8 +109,8 @@ CLIENT_LIST,globbi,192.168.1.112:56513,10.8.0.18,,2735402,5955826,Sun Oct  1 20:
                             'virt_addr:{}'.format(o_stats[VIRT_ADDR]),
                             'username:{}'.format(o_stats[USERNAME])] + self.tags
                     connected_time = int(time.time()) - int(o_stats[CONN_SINCET])
-                    self.stats.gauge('openvpn.client.bytesin', o_stats[BYTESIN], tags=tags)
-                    self.stats.gauge('openvpn.client.bytesout', o_stats[BYTESOUT], tags=tags)
+                    self.stats.gauge('openvpn.client.bytesin', int(o_stats[BYTESIN]), tags=tags)
+                    self.stats.gauge('openvpn.client.bytesout', int(o_stats[BYTESOUT]), tags=tags)
                     self.stats.gauge('openvpn.client.conntime', connected_time, tags=tags)
 
     def tail_log(self, logfile):
@@ -141,8 +141,7 @@ if __name__ == "__main__":
         monitor.parse_loadstats(loadstats)
         status = monitor.get_status()
         monitor.parse_status(status)
-        monitor.disconnect()
-        monitor.tail_log(os.getenv('OVPN_LOGS', '/var/log/openvpn.log'))
+        monitor.disconnect()og'))
         monitor.flush_datadog()
         time.sleep(60)
         monitor.init_datadog()
