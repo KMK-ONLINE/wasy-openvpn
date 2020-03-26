@@ -141,7 +141,7 @@ if __name__ == "__main__":
         monitor.parse_loadstats(loadstats)
         status = monitor.get_status()
         monitor.parse_status(status)
-        monitor.disconnect()og'))
+        monitor.disconnect()
         monitor.flush_datadog()
         time.sleep(60)
         monitor.init_datadog()
